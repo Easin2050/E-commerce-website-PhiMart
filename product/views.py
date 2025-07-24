@@ -1,17 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from product.models import Product, Category
+from rest_framework import status
+from product.serializers import ProductSerializer
 
 @api_view()
 def view_specific_product(request,id):
-    try:
-        product=Product.objects.get(pk=id)
-        product_dict={'id':product.id,'name':product.name,'price': product.price}
-        return Response(product_dict)
-    except Product.DoesNotExist:
-        return Response({'Messege':'No product available'})
-
+    product=get_object_or_404(Product,pk=id)
+    serializer=ProductSerializer(product)
+    return Response(serializer.data)
+    
 @api_view()
 def view_category(request):
     return Response({'messages':'It is the category list'})
