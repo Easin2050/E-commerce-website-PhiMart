@@ -44,8 +44,6 @@ INSTALLED_APPS = [
     'order',
     'api',
     "debug_toolbar",
-
-
 ]
 
 INTERNAL_IPS = [
