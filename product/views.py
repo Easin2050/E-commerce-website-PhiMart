@@ -7,24 +7,9 @@ from product.models import Product, Category
 from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
+from rest_framework.mixins import CreateModelMixin
+from rest_framework.generics import ListCreateAPIView
 # Create your views here.
-
-
-@api_view(['GET', 'POST'])
-def view_products(request):
-    if request.method == 'GET':
-        products = Product.objects.select_related('category').all()
-        serializer = ProductSerializer(
-            products, many=True)
-        return Response(serializer.data)
-    if request.method == 'POST':
-        # Deserializer
-        serializer = ProductSerializer(
-            data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
 
 class ViewProducts(APIView):
     def get(self,request):
@@ -40,25 +25,16 @@ class ViewProducts(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+# It is used for reduce redundent code and to use the same serializer for both list and create operations.
+class ProductList(ListCreateAPIView):
+    queryset = Product.objects.select_related('category').all()
+    serializer_class = ProductSerializer
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def view_specific_product(request, id):
-    if request.method == 'GET':
-        product = get_object_or_404(Product, pk=id)
-        serializer = ProductSerializer(product)
-        return Response(serializer.data)
-    if request.method == 'PUT':
-        product = get_object_or_404(Product, pk=id)
-        serializer = ProductSerializer(product, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
-    if request.method == 'DELETE':
-        product = get_object_or_404(Product, pk=id)
-        copy_of_product = product
-        product.delete()
-        serializer = ProductSerializer(copy_of_product)
-        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+    '''def get_queryset(self):
+        return Product.objects.select_related('category').all()
+    
+    def get_serializer_class(self):
+        return ProductSerializer'''
 
 class ViewSpecificProduct(APIView):
     def get(self, request, id):
@@ -78,17 +54,6 @@ class ViewSpecificProduct(APIView):
         serializer = ProductSerializer(copy_of_product)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
-@api_view(['GET','POST'])
-def view_categories(request):
-    if request.method=='GET':
-        categories = Category.objects.annotate(
-            product_count=Count('products')).all()
-        serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data)
-    if request.method=='POST':
-        serializer=ProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        return Response(serializer.data,status=status.HTTP_201_CREATED)
 
 class ViewCategories(APIView):
     def get(self,request):
@@ -103,23 +68,6 @@ class ViewCategories(APIView):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET','PUT','DELETE'])
-def view_specific_category(request, id):
-    if request.method=='GET':
-        category = get_object_or_404(Category, pk=id)
-        serializer = CategorySerializer(category)
-        return Response(serializer.data)
-    if request.method=='PUT':
-        serializer=CategorySerializer(category,data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-    if request.method=='DELETE':
-        category=get_object_or_404(Category,pk=id)
-        copy_of_category=category
-        category.delete()
-        serializer=CategorySerializer(copy_of_category)
-        return Response(serializer.data,status=status.HTTP_204_NO_CONTENT)
-    
 class ViewSpecificCategory(APIView):
     def get(self, request, id):
         category = get_object_or_404(Category.objects.annotate(
