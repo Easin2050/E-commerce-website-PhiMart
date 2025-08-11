@@ -67,6 +67,10 @@ class ViewCategories(APIView):
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+class CategoryList(ListCreateAPIView):
+    queryset=Category.objects.annotate(
+            product_count=Count('products')).all()
+    serializer_class=CategorySerializer
 
 class ViewSpecificCategory(APIView):
     def get(self, request, id):
