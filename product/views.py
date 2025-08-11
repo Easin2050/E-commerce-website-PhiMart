@@ -90,6 +90,18 @@ def view_categories(request):
         serializer.is_valid(raise_exception=True)
         return Response(serializer.data,status=status.HTTP_201_CREATED)
 
+class ViewCategories(APIView):
+    def get(self,request):
+        categories = Category.objects.annotate(
+            product_count=Count('products')).all()
+        serializer = CategorySerializer(categories, many=True)
+        return Response(serializer.data)
+    def post(self, request):
+        serializer = CategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 @api_view(['GET','PUT','DELETE'])
 def view_specific_category(request, id):
@@ -103,7 +115,30 @@ def view_specific_category(request, id):
         serializer.save()
     if request.method=='DELETE':
         category=get_object_or_404(Category,pk=id)
-        copy_of_category=CategorySerializer(category)
+        copy_of_category=category
         category.delete()
         serializer=CategorySerializer(copy_of_category)
         return Response(serializer.data,status=status.HTTP_204_NO_CONTENT)
+    
+class ViewSpecificCategory(APIView):
+    def get(self, request, id):
+        category = get_object_or_404(Category.objects.annotate(
+            product_count=Count('products')).all(),pk=id)
+        serializer = CategorySerializer(category)
+        return Response(serializer.data)
+
+    def put(self, request, id):
+        category = get_object_or_404(Category.objects.annotate(
+            product_count=Count('products')).all(),pk=id)
+        serializer = CategorySerializer(category, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
+
+    def delete(self, request, id):
+        category = get_object_or_404(Category.objects.annotate(
+            product_count=Count('products')).all(),pk=id)        
+        copy_of_category = category
+        category.delete()
+        serializer = CategorySerializer(copy_of_category)
+        return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
