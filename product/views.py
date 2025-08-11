@@ -8,7 +8,7 @@ from product.serializers import ProductSerializer, CategorySerializer
 from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.mixins import CreateModelMixin
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 # Create your views here.
 
 class ViewProducts(APIView):
@@ -54,6 +54,17 @@ class ViewSpecificProduct(APIView):
         serializer = ProductSerializer(copy_of_product)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
 
+class ProductDetails(RetrieveUpdateDestroyAPIView):
+    queryset=Product.objects.all()
+    serializer_class=ProductSerializer
+    lookup_field = 'id'
+
+    def delete(self, request,id):
+        product=get_object_or_404(Product, pk=id)
+        if product.stock > 0:
+            return Response({'message': 'Product with stock more than 10 can not be deleted'})
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ViewCategories(APIView):
     def get(self,request):
@@ -94,3 +105,9 @@ class ViewSpecificCategory(APIView):
         category.delete()
         serializer = CategorySerializer(copy_of_category)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
+
+class ViewSpecificCategory(RetrieveUpdateDestroyAPIView):
+    queryset=Category.objects.annotate(
+            product_count=Count('products')).all()
+    serializer_class=CategorySerializer
+    lookup_field = 'id'
