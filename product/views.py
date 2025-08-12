@@ -9,9 +9,9 @@ from django.db.models import Count
 from rest_framework.views import APIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
-from rest_framework.viewsets import ModelViewsSet
+from rest_framework.viewsets import ModelViewSet
 
-class ProductViewSet(ModelViewsSet):
+class ProductViewSet(ModelViewSet):
     queryset=Product.objects.all()
     serializer_class=ProductSerializer
 
@@ -23,39 +23,6 @@ class ProductViewSet(ModelViewsSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-# It is used for reduce redundent code and to use the same serializer for both list and create operations.
-class ProductList(ListCreateAPIView):
-    queryset = Product.objects.select_related('category').all()
-    serializer_class = ProductSerializer
-
-    '''def get_queryset(self):
-        return Product.objects.select_related('category').all()
-    
-    def get_serializer_class(self):
-        return ProductSerializer'''
-
-
-class ProductDetails(RetrieveUpdateDestroyAPIView):
-    queryset=Product.objects.all()
-    serializer_class=ProductSerializer
-    lookup_field = 'id'
-
-    def delete(self, request,id):
-        product=get_object_or_404(Product, pk=id)
-        if product.stock > 0:
-            return Response({'message': 'Product with stock more than 10 can not be deleted'})
-        product.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class CategoryList(ListCreateAPIView):
-    queryset=Category.objects.annotate(
-            product_count=Count('products')).all()
+class CategoryViewSet(ModelViewSet):
+    queryset=Category.objects.annotate(product_count=Count('products')).all()
     serializer_class=CategorySerializer
-
-
-class ViewSpecificCategory(RetrieveUpdateDestroyAPIView):
-    queryset=Category.objects.annotate(
-            product_count=Count('products')).all()
-    serializer_class=CategorySerializer
-    lookup_field = 'id'
