@@ -13,10 +13,14 @@ from rest_framework.viewsets import ModelViewSet
 from django_filters.rest_framework import DjangoFilterBackend
 from product.filters import ProductFilter
 from rest_framework.filters import SearchFilter,OrderingFilter
+from rest_framework.pagination import PageNumberPagination
+from product.paginations import DefaultPagination
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class=ProductSerializer
+    # pagination_class=PageNumberPagination
+    pagination_class=DefaultPagination
     filter_backends = [DjangoFilterBackend,SearchFilter,OrderingFilter]
     # filterset_fields = ['category_id','price']
     filterset_class=ProductFilter
