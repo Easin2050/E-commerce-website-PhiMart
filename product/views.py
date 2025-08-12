@@ -10,18 +10,18 @@ from rest_framework.views import APIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.generics import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework.viewsets import ModelViewSet
-
+from django_filters.rest_framework import DjangoFilterBackend
+from product.filters import ProductFilter
+from rest_framework.filters import SearchFilter,OrderingFilter
 
 class ProductViewSet(ModelViewSet):
+    queryset = Product.objects.all()
     serializer_class=ProductSerializer
-
-    def get_queryset(self):
-        queryset=Product.objects.all()
-        category_id=self.request.query_params.get('category_id')
-        
-        if category_id is not None:
-            queryset=queryset.filter(category_id=category_id)
-        return queryset
+    filter_backends = [DjangoFilterBackend,SearchFilter,OrderingFilter]
+    # filterset_fields = ['category_id','price']
+    filterset_class=ProductFilter
+    search_fields = ['name', 'description']
+    ordering_fields = ['price','updated_at']
 
     def destroy(self,request,*args,**kwargs):
         product=self.get_object()

@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'order',
     'api',
     "debug_toolbar",
+    'django_filters',
+
 ]
 
 INTERNAL_IPS = [
