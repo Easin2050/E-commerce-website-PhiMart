@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     "django.contrib.staticfiles",
     'rest_framework',
+    'djoser',
     'users',
     'product',
     'order',
@@ -142,4 +143,17 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING':False,
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     # 'PAGE_SIZE':10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+DJOSER={
+    'SERIALIZERS':{
+        'user_create':'users.serializers.UserCreateSerializer'
+    }
 }
