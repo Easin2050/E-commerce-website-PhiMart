@@ -15,6 +15,7 @@ from product.filters import ProductFilter
 from rest_framework.filters import SearchFilter,OrderingFilter
 from rest_framework.pagination import PageNumberPagination
 from product.paginations import DefaultPagination
+from rest_framework.permissions import IsAdminUser,AllowAny
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
@@ -26,6 +27,11 @@ class ProductViewSet(ModelViewSet):
     filterset_class=ProductFilter
     search_fields = ['name', 'description']
     ordering_fields = ['price','updated_at']
+    # permission_classes=[IsAdminUser]
+    def get_permissions(self):
+        if self.request.method=='GET':
+            return [AllowAny()]
+        return [IsAdminUser()]
 
     def destroy(self,request,*args,**kwargs):
         product=self.get_object()
