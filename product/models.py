@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.core.validators import MinValueValidator,MaxValueValidator
+from product.validators import validate_file_size
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -28,8 +29,10 @@ class ProductImage(models.Model):
         Product,on_delete=models.CASCADE,related_name='images'
     )
     image=models.ImageField(
-        upload_to='products/images/'
+        upload_to='products/images/',
+        validators=[validate_file_size]
     )
+
 
 
 class Review(models.Model):

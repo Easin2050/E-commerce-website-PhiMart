@@ -52,10 +52,3 @@ class OrderService:
         return order
 
 
-"""
-Transaction
-A       B
-100
-0     
-        400
-"""
