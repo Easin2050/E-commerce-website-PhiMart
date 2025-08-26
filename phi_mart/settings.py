@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL='users.User'
+AUTH_USER_MODEL = 'users.User'
 
 # Application definition
 
@@ -38,18 +38,16 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    "django.contrib.staticfiles",
+    'django.contrib.staticfiles',
+    'drf_yasg',
+    'django_filters',
     'rest_framework',
     'djoser',
-    'rest_framework_simplejwt',
-    'users',
-    'product',
-    'order',
     'api',
+    'product',
+    'users',
+    'order',
     "debug_toolbar",
-    'django_filters',
-    'drf_yasg',
-
 ]
 
 INTERNAL_IPS = [
@@ -136,9 +134,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
-MEDIA_URL='/media/'
+MEDIA_URL = '/media/'
 
-MEDIA_ROOT=BASE_DIR/'media'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -150,6 +148,9 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    # 'DEFAULT_PERMISSION_CLASSES': [
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ]
 }
 
 SIMPLE_JWT = {
@@ -157,20 +158,20 @@ SIMPLE_JWT = {
    "ACCESS_TOKEN_LIFETIME": timedelta(days=5),
 }
 
-DJOSER={
-    'SERIALIZERS':{
-        'user_create':'users.serializers.UserCreateSerializer',
-        'current_user': 'users.serializers.UserSerializer',
-    }
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'users.serializers.UserCreateSerializer',
+        'current_user': 'users.serializers.UserSerializer'
+    },
 }
 
 SWAGGER_SETTINGS = {
-   'SECURITY_DEFINITIONS': {
-      'Bearer': {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header',
-            'description':'Enter Your JWT  token in the format:"JWT <your_token>"'
-      }
-   }
+            'description': 'Enter your JWT token in the format: `JWT <your_token>`'
+        }
+    }
 }
