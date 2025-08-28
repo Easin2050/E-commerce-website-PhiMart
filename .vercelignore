@@ -1,7 +1,0 @@
-venv/
-*.pyc
-__pycache__/
-.git/
-node_modules/
-*.sqlite3
-media/
