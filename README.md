@@ -84,3 +84,15 @@ After starting the server, explore API docs at:
 Swagger UI: http://127.0.0.1:8000/swagger/
 
 Redoc: http://127.0.0.1:8000/redoc/
+
+
+## 🧾 License
+
+This project is licensed under the MIT License
+
+## 🧑‍💻 Author
+
+Md Easin
+📧 easin562050@gmail.com
+
+💻 GitHub: https://github.com/Easin2050
