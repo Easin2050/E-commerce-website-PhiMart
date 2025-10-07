@@ -60,12 +60,12 @@ cd phiMart
 
 ### 2️⃣ Create a virtual environment & activate it
 
-python -m venv venv
+python -m venv .phi_env
 
 ## Linux / Mac
-source venv/bin/activate  
+source .phi_env/bin/activate  
 ## Windows
-venv\Scripts\activate
+.phi_env\Scripts\activate
 
 ### 3️⃣ Install dependencies
 pip install -r requirements.txt
